@@ -10,9 +10,9 @@ do
     --count 1 \
     --instance-type $INSTANCE_TYPE \
     --security-group-ids $SG_ID \
-    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$instance}]") \
+    --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$instance}]" \
     --query "Instances[0].InstanceId" \
-    --output text
+    --output text )
 
     echo "INSTANCE_ID :: $INSTANCE_ID"
     if [ $instance == "frontend" ]; then 
