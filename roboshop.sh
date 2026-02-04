@@ -12,6 +12,7 @@ do
     --security-group-ids $SG_ID \
     --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$instance}]")
 
+    echo "INSTANCE_ID :: $INSTANCE_ID"
     if [ $instance == "frontend" ]; then 
         IP=$(aws ec2 describe-instances \
         --instance-ids $INSTANCE_ID \
