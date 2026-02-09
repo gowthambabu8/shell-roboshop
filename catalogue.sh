@@ -39,3 +39,14 @@ else
 fi
 
 mkdir -p /app
+curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip
+cd /app
+unzip /tmp/catalogue.zip
+npm install
+
+cp catalogue.service /etc/systemd/system/catalogue.service ?>>$LOGS_FILE
+
+systemctl daemon-reload
+systemctl enable catalogue
+systemctl start catalogue
+
