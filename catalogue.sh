@@ -9,7 +9,7 @@ USERID=$(id -u)
 
 LOGS_FOLDER="/var/log/shell-robo"
 LOGS_FILE="/var/log/shell-robo/$0.log"
-
+SCRIPT_DIR=$PWD
 mkdir -p $LOGS_FOLDER
 
 if [ $USERID -ne 0 ]; then 
@@ -41,10 +41,12 @@ fi
 mkdir -p /app
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip
 cd /app
+
+rm -rf /app/*
 unzip /tmp/catalogue.zip
 npm install
 
-cp catalogue.service /etc/systemd/system/catalogue.service
+cp $PWD/catalogue.service /etc/systemd/system/catalogue.service
 
 systemctl daemon-reload
 systemctl enable catalogue
