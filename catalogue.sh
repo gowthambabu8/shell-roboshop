@@ -10,6 +10,7 @@ USERID=$(id -u)
 LOGS_FOLDER="/var/log/shell-robo"
 LOGS_FILE="/var/log/shell-robo/$0.log"
 SCRIPT_DIR=$PWD
+MONGODB_HOST="mongodb.happielearning.com"
 mkdir -p $LOGS_FOLDER
 
 if [ $USERID -ne 0 ]; then 
@@ -51,4 +52,9 @@ cp $SCRIPT_DIR/catalogue.service /etc/systemd/system/catalogue.service
 systemctl daemon-reload
 systemctl enable catalogue
 systemctl start catalogue
+VALIDATE $? "starting catalogue service..."
+cp mongo.repo /etc/yum.repos.d/mongo.service
+dnf install mongodb-mongosh -y
 
+mongosh --host $MONGODB_HOST </app/db/master-data.js
+VALIDATE $? "data loading completed...."
