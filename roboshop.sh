@@ -33,7 +33,7 @@ do
     fi
 
     echo "IP is $IP"
-    echo "Domain is $DOMAIN"
+    echo "Domain is $DOMAIN_NAME"
 
     aws route53 change-resource-record-sets \
         --hosted-zone-id $ZONE_ID \
