@@ -28,6 +28,7 @@ fi
 }
 
 dnf install maven -y &>>$LOGS_FILE
+VALIDATE $? "Installing maven......"
 USER_CHECK="roboshop"
 if id "$USER_CHECK" &>/dev/null; then 
     echo -e "user roboshop already exists" | tee -a $LOGS_FILE
