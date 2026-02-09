@@ -33,7 +33,7 @@ dnf module enable redis:7 -y &>>$LOGS_FILE
 VALIDATE $? "enabling module 7 for redis...."
 dnf install redis -y &>>$LOGS_FILE
 VALIDATE $? "installing redis...."
-sed -i -e "s/127.0.0.1/0.0.0.0/g" -e "/protected mode/c protected mode no" /etc/redis/redis.conf
+sed -i -e "s/127.0.0.1/0.0.0.0/g" -e "/protected-mode/c protected-mode no" /etc/redis/redis.conf
 systemctl enable redis &>>$LOGS_FILE
 VALIDATE $? "enabling redis service..."
 systemctl start redis &>>$LOGS_FILE
