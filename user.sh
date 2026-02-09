@@ -61,8 +61,3 @@ systemctl enable user &>>$LOGS_FILE
 VALIDATE $? "enabling user service...."
 systemctl start user &>>$LOGS_FILE
 VALIDATE $? "starting user service..."
-cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo
-dnf install mongodb-mongosh -y &>>$LOGS_FILE
-VALIDATE $? "installing mongodb client...."
-mongosh --host $MONGODB_HOST </app/db/master-data.js
-VALIDATE $? "data loading completed...."
