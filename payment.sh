@@ -40,6 +40,9 @@ mkdir -p /app &>>$LOGS_FILE
 curl -o /tmp/payment.zip https://roboshop-artifacts.s3.amazonaws.com/payment-v3.zip &>>$LOGS_FILE
 VALIDATE $? "downloading payment source code...."
 cd /app &>>$LOGS_FILE
+rm -rf /app/* 
+unzip /tmp/payment.zip
+VALIDATE $? "unzipping payment source code...."
 pip3 install -r requirements.txt &>>$LOGS_FILE
 VALIDATE $? "downloading payment required packages...."
 cp $SCRIPT_DIR/payment.service /etc/systemd/system/payment.service &>>$LOGS_FILE
