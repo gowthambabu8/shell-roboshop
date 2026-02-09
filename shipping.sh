@@ -27,7 +27,7 @@ VALIDATE(){
 fi    
 }
 
-dnf install maven -y
+dnf install maven -y &>>$LOGS_FILE
 USER_CHECK="roboshop"
 if id "$USER_CHECK" &>/dev/null; then 
     echo -e "user roboshop already exists" | tee -a $LOGS_FILE
@@ -53,9 +53,15 @@ cp $SCRIPT_DIR/shipping.service /etc/systemd/system/shipping.service
 
 dnf install mysql -y &>>$LOGS_FILE
 VALIDATE $? "mysql client installation...."
-mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/schema.sql
-mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/app-user.sql 
-mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/master-data.sql
+mysql -h $MYSQL_HOST -uroot -pRoboShop@1 -e 'use cities'
+if [ $? -ne 0 ]; then
+    mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/schema.sql
+    mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/app-user.sql 
+    mysql -h $MYSQL_HOST -uroot -pRoboShop@1 < /app/db/master-data.sql
+    VALIDATE $? "Data loading..."
+else
+    echo -e "Data exists for cities database" | tee -a $LOGS_FILE
+fi
 
 systemctl daemon-reload &>>$LOGS_FILE
 VALIDATE $? "daemon-reload...."
