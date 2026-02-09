@@ -27,34 +27,42 @@ VALIDATE(){
 fi    
 }
 
-dnf module list nodejs
-dnf module disable nodejs -y
-dnf module enable nodejs:20 -y
-dnf install nodejs -y
+dnf module list nodejs &>>$LOGS_FILE
+VALIDATE $? "listing nodejs modules...."
+dnf module disable nodejs -y &>>$LOGS_FILE
+VALIDATE $? "disabling latest nodejs module...."
+dnf module enable nodejs:20 -y &>>$LOGS_FILE
+VALIDATE $? "enabling version 20 for nodejs...."
+dnf install nodejs -y &>>$LOGS_FILE
+VALIDATE $? "installing nodejs required version...."
 
-id roboshop &>>$LOGS_FILE
+id roboshop
 if [ $? -ne 0 ];then 
     useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop
 else
-    echo -e "user roboshop already exists"
+    echo -e "user roboshop already exists" | tee -a $LOGS_FILE
 fi
 
-mkdir -p /app
-curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip
-cd /app
+mkdir -p /app &>>$LOGS_FILE
+curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>>$LOGS_FILE
+VALIDATE $? "downloading catalogue source code...."
+cd /app &>>$LOGS_FILE
 
-rm -rf /app/*
+rm -rf /app/* 
 unzip /tmp/catalogue.zip
+VALIDATE $? "unzipping catalogue source code...."
 npm install
-
+VALIDATE $? "installing npm build tool...."
 cp $SCRIPT_DIR/catalogue.service /etc/systemd/system/catalogue.service
 
-systemctl daemon-reload
-systemctl enable catalogue
-systemctl start catalogue
+systemctl daemon-reload &>>$LOGS_FILE
+VALIDATE $? "thread daemon reload...."
+systemctl enable catalogue &>>$LOGS_FILE
+VALIDATE $? "enabling catalogue service...."
+systemctl start catalogue &>>$LOGS_FILE
 VALIDATE $? "starting catalogue service..."
 cp mongo.repo /etc/yum.repos.d/mongo.service
-dnf install mongodb-mongosh -y
-
+dnf install mongodb-mongosh -y &>>$LOGS_FILE
+VALIDATE $? "installing mongodb client...."
 mongosh --host $MONGODB_HOST </app/db/master-data.js
 VALIDATE $? "data loading completed...."
